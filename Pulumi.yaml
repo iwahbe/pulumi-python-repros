@@ -1,0 +1,13 @@
+name: ian-test-python
+description: A minimal Python Pulumi program
+runtime:
+    name: python
+    options:
+        virtualenv: venv
+
+plugins:
+  providers: []
+    # - name: command
+    #   path: /Users/ianwahbe/go/src/github.com/pulumi/pulumi-command/bin
+    # - name: gcp
+    #   path: /Users/ianwahbe/go/src/github.com/pulumi/pulumi-gcp/bin

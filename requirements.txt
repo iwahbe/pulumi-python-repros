@@ -1,0 +1,7 @@
+pulumi>=3.0.0,<4.0.0
+# pulumi-aws==6.24.0
+# pulumi_gcp==6.62.0
+# pulumi_gcp==7.9.0
+# pulumi_openstack>=3.11.0
+# pulumi-random==4.16.0
+pinecone_pulumi>=0.4.1
