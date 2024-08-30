@@ -1,12 +1,2 @@
-pulumi==3.126.0
-# pulumi-aws>=6.24.0
-# pulumi_gcp==6.62.0
-# pulumi_gcp>==/Users/ianwahbe/go/src/github.com/pulumi/pulumi-gcp/sdk/python
-# pulumi_ope>nstack>=3.11.0
-# pulumi-random==4.16.0
-# pinecone_pulumi>=0.4.1
-# pulumi_newrelic>=5.22.1
-# pulumi_databricks==1.45.0
-# pulumi_cloudflare>=5.34.0
-
--e ./random/python
+pulumi==3.129.0
+sdks/random

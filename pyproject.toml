@@ -1,0 +1,4 @@
+[tool.pyright]
+venvPath = "/Users/ianwahbe/Projects/pulumi/langs/python"
+venv = "venv"
+include = ["__main__.py"]

@@ -1,2 +1,5 @@
+# config:
+#   azurerm:features:
+#     recover_soft_deleted: true
 environment:
   - providers.all

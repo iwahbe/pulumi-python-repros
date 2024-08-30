@@ -343,7 +343,7 @@ async def get_package():
 				registerPackageResponse = monitor.RegisterPackage(
 					resource_pb2.RegisterPackageRequest(
 						name="terraform-provider",
-						version="0.0.0-dev",
+						version="0.0.28",
 						download_url=get_plugin_download_url(),
 						parameterization=parameterization,
 					))

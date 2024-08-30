@@ -9,10 +9,10 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
 
-__all__ = ['StringArgs', 'String']
+__all__ = ['PasswordArgs', 'Password']
 
 @pulumi.input_type
-class StringArgs:
+class PasswordArgs:
     def __init__(__self__, *,
                  length: pulumi.Input[float],
                  keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -27,7 +27,7 @@ class StringArgs:
                  special: Optional[pulumi.Input[bool]] = None,
                  upper: Optional[pulumi.Input[bool]] = None):
         """
-        The set of arguments for constructing a String resource.
+        The set of arguments for constructing a Password resource.
         :param pulumi.Input[float] length: The length of the string desired. The minimum value for length is 1 and, length must also be >= (`min_upper` +
                `min_lower` + `min_numeric` + `min_special`).
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] keepers: Arbitrary map of values that, when changed, will trigger recreation of resource. See the main provider documentation for
@@ -227,8 +227,9 @@ class StringArgs:
 
 
 @pulumi.input_type
-class _StringState:
+class _PasswordState:
     def __init__(__self__, *,
+                 bcrypt_hash: Optional[pulumi.Input[str]] = None,
                  keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  length: Optional[pulumi.Input[float]] = None,
                  lower: Optional[pulumi.Input[bool]] = None,
@@ -243,7 +244,9 @@ class _StringState:
                  special: Optional[pulumi.Input[bool]] = None,
                  upper: Optional[pulumi.Input[bool]] = None):
         """
-        Input properties used for looking up and filtering String resources.
+        Input properties used for looking up and filtering Password resources.
+        :param pulumi.Input[str] bcrypt_hash: A bcrypt hash of the generated random string. **NOTE**: If the generated random string is greater than 72 bytes in
+               length, `bcrypt_hash` will contain a hash of the first 72 bytes.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] keepers: Arbitrary map of values that, when changed, will trigger recreation of resource. See the main provider documentation for
                more information.
         :param pulumi.Input[float] length: The length of the string desired. The minimum value for length is 1 and, length must also be >= (`min_upper` +
@@ -264,6 +267,8 @@ class _StringState:
         :param pulumi.Input[bool] special: Include special characters in the result. These are `!@#$%&*()-_=+[]{}<>:?`. Default value is `true`.
         :param pulumi.Input[bool] upper: Include uppercase alphabet characters in the result. Default value is `true`.
         """
+        if bcrypt_hash is not None:
+            pulumi.set(__self__, "bcrypt_hash", bcrypt_hash)
         if keepers is not None:
             pulumi.set(__self__, "keepers", keepers)
         if length is not None:
@@ -293,6 +298,19 @@ class _StringState:
             pulumi.set(__self__, "special", special)
         if upper is not None:
             pulumi.set(__self__, "upper", upper)
+
+    @property
+    @pulumi.getter(name="bcryptHash")
+    def bcrypt_hash(self) -> Optional[pulumi.Input[str]]:
+        """
+        A bcrypt hash of the generated random string. **NOTE**: If the generated random string is greater than 72 bytes in
+        length, `bcrypt_hash` will contain a hash of the first 72 bytes.
+        """
+        return pulumi.get(self, "bcrypt_hash")
+
+    @bcrypt_hash.setter
+    def bcrypt_hash(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "bcrypt_hash", value)
 
     @property
     @pulumi.getter
@@ -458,7 +476,7 @@ class _StringState:
         pulumi.set(self, "upper", value)
 
 
-class String(pulumi.CustomResource):
+class Password(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
@@ -477,7 +495,7 @@ class String(pulumi.CustomResource):
                  upper: Optional[pulumi.Input[bool]] = None,
                  __props__=None):
         """
-        Create a String resource with the given unique name, props, and options.
+        Create a Password resource with the given unique name, props, and options.
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] keepers: Arbitrary map of values that, when changed, will trigger recreation of resource. See the main provider documentation for
@@ -503,17 +521,17 @@ class String(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
-                 args: StringArgs,
+                 args: PasswordArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Create a String resource with the given unique name, props, and options.
+        Create a Password resource with the given unique name, props, and options.
         :param str resource_name: The name of the resource.
-        :param StringArgs args: The arguments to use to populate this resource's properties.
+        :param PasswordArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
         """
         ...
     def __init__(__self__, resource_name: str, *args, **kwargs):
-        resource_args, opts = _utilities.get_resource_args_opts(StringArgs, pulumi.ResourceOptions, *args, **kwargs)
+        resource_args, opts = _utilities.get_resource_args_opts(PasswordArgs, pulumi.ResourceOptions, *args, **kwargs)
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
@@ -541,7 +559,7 @@ class String(pulumi.CustomResource):
         if opts.id is None:
             if __props__ is not None:
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
-            __props__ = StringArgs.__new__(StringArgs)
+            __props__ = PasswordArgs.__new__(PasswordArgs)
 
             __props__.__dict__["keepers"] = keepers
             if length is None and not opts.urn:
@@ -557,18 +575,22 @@ class String(pulumi.CustomResource):
             __props__.__dict__["override_special"] = override_special
             __props__.__dict__["special"] = special
             __props__.__dict__["upper"] = upper
+            __props__.__dict__["bcrypt_hash"] = None
             __props__.__dict__["result"] = None
-        super(String, __self__).__init__(
-            'random:index/string:String',
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["bcryptHash", "result"])
+        opts = pulumi.ResourceOptions.merge(opts, secret_opts)
+        super(Password, __self__).__init__(
+            'random:index/password:Password',
             resource_name,
             __props__,
             opts,
-            package=_utilities.get_package())
+            package_ref=_utilities.get_package())
 
     @staticmethod
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
+            bcrypt_hash: Optional[pulumi.Input[str]] = None,
             keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
             length: Optional[pulumi.Input[float]] = None,
             lower: Optional[pulumi.Input[bool]] = None,
@@ -581,14 +603,16 @@ class String(pulumi.CustomResource):
             override_special: Optional[pulumi.Input[str]] = None,
             result: Optional[pulumi.Input[str]] = None,
             special: Optional[pulumi.Input[bool]] = None,
-            upper: Optional[pulumi.Input[bool]] = None) -> 'String':
+            upper: Optional[pulumi.Input[bool]] = None) -> 'Password':
         """
-        Get an existing String resource's state with the given name, id, and optional extra
+        Get an existing Password resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
 
         :param str resource_name: The unique name of the resulting resource.
         :param pulumi.Input[str] id: The unique provider ID of the resource to lookup.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param pulumi.Input[str] bcrypt_hash: A bcrypt hash of the generated random string. **NOTE**: If the generated random string is greater than 72 bytes in
+               length, `bcrypt_hash` will contain a hash of the first 72 bytes.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] keepers: Arbitrary map of values that, when changed, will trigger recreation of resource. See the main provider documentation for
                more information.
         :param pulumi.Input[float] length: The length of the string desired. The minimum value for length is 1 and, length must also be >= (`min_upper` +
@@ -611,8 +635,9 @@ class String(pulumi.CustomResource):
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
-        __props__ = _StringState.__new__(_StringState)
+        __props__ = _PasswordState.__new__(_PasswordState)
 
+        __props__.__dict__["bcrypt_hash"] = bcrypt_hash
         __props__.__dict__["keepers"] = keepers
         __props__.__dict__["length"] = length
         __props__.__dict__["lower"] = lower
@@ -626,7 +651,16 @@ class String(pulumi.CustomResource):
         __props__.__dict__["result"] = result
         __props__.__dict__["special"] = special
         __props__.__dict__["upper"] = upper
-        return String(resource_name, opts=opts, __props__=__props__)
+        return Password(resource_name, opts=opts, __props__=__props__)
+
+    @property
+    @pulumi.getter(name="bcryptHash")
+    def bcrypt_hash(self) -> pulumi.Output[str]:
+        """
+        A bcrypt hash of the generated random string. **NOTE**: If the generated random string is greater than 72 bytes in
+        length, `bcrypt_hash` will contain a hash of the first 72 bytes.
+        """
+        return pulumi.get(self, "bcrypt_hash")
 
     @property
     @pulumi.getter

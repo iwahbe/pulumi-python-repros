@@ -76,5 +76,5 @@ class Provider(pulumi.ProviderResource):
             resource_name,
             __props__,
             opts,
-            package=_utilities.get_package())
+            package_ref=_utilities.get_package())
 

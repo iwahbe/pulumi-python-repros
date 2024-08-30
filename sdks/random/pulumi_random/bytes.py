@@ -191,7 +191,7 @@ class Bytes(pulumi.CustomResource):
             resource_name,
             __props__,
             opts,
-            package=_utilities.get_package())
+            package_ref=_utilities.get_package())
 
     @staticmethod
     def get(resource_name: str,
