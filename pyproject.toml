@@ -1,4 +1,10 @@
-[tool.pyright]
-venvPath = "/Users/ianwahbe/Projects/pulumi/langs/python"
-venv = "venv"
-include = ["__main__.py"]
+[project]
+name = "test"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pulumi>=3.162.0",
+    "pulumi-random>=4.19.0",
+]

@@ -1,20 +1,15 @@
 name: ian-test-python
 description: A minimal Python Pulumi program
 runtime:
-    name: python
-    options:
-        virtualenv: venv
-
-# options:
-#   refresh: always
-
-plugins:
-  providers:
-    # - name: command
-    #   path: /Users/ianwahbe/go/src/github.com/pulumi/pulumi-command/bin
-    # - name: gcp
-    #   path: /Users/ianwahbe/go/src/github.com/pulumi/pulumi-gcp/bin
-    # - name: pinecone
-    #   path: /Users/ianwahbe/go/src/github.com/pinecone-io/pulumi-pinecone/bin
-    - name: terraform-provider
-      path: /Users/ianwahbe/go/src/github.com/pulumi/pulumi-terraform-bridge/dynamic/bin
+  name: python
+  options:
+    toolchain: uv
+packages:
+  random-component-1:
+    source: github.com/moolumi/random-component-1-py
+  random-component-2-py:
+    source: github.com/moolumi/random-component-2-py
+  random-component-3-py:
+    source: github.com/moolumi/random-component-3-py
+  random-component-4-py:
+    source: github.com/moolumi/random-component-4-py
